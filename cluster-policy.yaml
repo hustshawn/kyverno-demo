@@ -1,0 +1,25 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: limit-cpu-request
+spec:
+  validationFailureAction: Enforce
+  rules:
+  - name: limit-cpu-request
+    match:
+      resources:
+        kinds:
+        - Deployment
+        - StatefulSet
+        - Pod
+    validate:
+      message: "CPU request should not exceed 2"
+      pattern:
+        spec:
+          template:
+            spec:
+              containers:
+              - name: "*"
+                resources:
+                  requests:
+                    cpu: "<2"

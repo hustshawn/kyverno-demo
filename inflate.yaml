@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: inflate
+  name: inflate
+  # namespace: scaling-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: inflate
+  template:
+    metadata:
+      labels:
+        app: inflate
+    spec:
+      containers:
+      - image: public.ecr.aws/eks-distro/kubernetes/pause:3.2
+        imagePullPolicy: IfNotPresent
+        name: pause
+        resources:
+          limits:
+            cpu: 3
+          requests:
+            cpu: 3
