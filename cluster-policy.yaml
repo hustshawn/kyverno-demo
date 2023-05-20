@@ -3,7 +3,7 @@ kind: ClusterPolicy
 metadata:
   name: limit-cpu-request
 spec:
-  validationFailureAction: Enforce
+  # validationFailureAction: Enforce
   rules:
   - name: limit-cpu-request
     match:
@@ -11,7 +11,6 @@ spec:
         kinds:
         - Deployment
         - StatefulSet
-        - Pod
     validate:
       message: "CPU request should not exceed 2"
       pattern:
@@ -23,3 +22,48 @@ spec:
                 resources:
                   requests:
                     cpu: "<2"
+  # - name: ignore-pod-cpu-request
+  #   match:
+  #     resources:
+  #       kinds:
+  #         - Pod
+  #   validate:
+  #     message: "Ignoring CPU request check as CPU requests are not specified."
+  #     pattern: {}
+  # - name: ignore-deploy-sts-cpu-request
+  #   match:
+  #     resources:
+  #       kinds:
+  #       - Deployment
+  #       - StatefulSet
+  #   validate:
+  #     message: "Ignoring CPU request check as CPU requests are not specified."
+  #     pattern: {}
+
+---
+
+# apiVersion: kyverno.io/v1
+# kind: ClusterPolicy
+# metadata:
+#   name: limit-cpu-request
+# spec:
+#   rules:
+#     - name: limit-cpu-request
+#       match:
+#         resources:
+#           kinds:
+#             - Deployment
+#       validate:
+#         message: "CPU request should be smaller than 2 when set"
+#         pattern:
+#           spec:
+#             template:
+#               spec:
+#                 containers:
+#                   - name: "*"
+#                     '$and':
+#                       - '$exists':
+#                           path: "resources.requests.cpu"
+#                       - '$lt':
+#                           path: "resources.requests.cpu"
+#                           value: "2"
