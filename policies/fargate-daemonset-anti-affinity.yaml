@@ -3,7 +3,7 @@ kind: ClusterPolicy
 metadata:
   name: add-daemonset-fargate-anti-affinity
 spec:
-  validationFailureAction: audit
+  validationFailureAction: Enforce
   background: false
   rules:
   - name: add-node-anti-affinity
