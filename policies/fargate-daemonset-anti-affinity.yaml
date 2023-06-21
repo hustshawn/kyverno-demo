@@ -1,0 +1,27 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: add-daemonset-fargate-anti-affinity
+spec:
+  validationFailureAction: audit
+  background: false
+  rules:
+  - name: add-node-anti-affinity
+    match:
+      resources:
+        kinds:
+        - DaemonSet
+    mutate:
+      patchStrategicMerge:
+        spec:
+          template:
+            spec:
+              affinity:
+                nodeAffinity:
+                  requiredDuringSchedulingIgnoredDuringExecution:
+                    nodeSelectorTerms:
+                    - matchExpressions:
+                      - key: eks.amazonaws.com/compute-type
+                        operator: NotIn
+                        values:
+                        - fargate
